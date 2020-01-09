@@ -13,6 +13,22 @@ resource "aws_instance" "jenkins-instance" {
     when    = destroy
     command = "sh ./scripts/remove_host.sh jenkins-instance ~/.ssh/config"
   }
+  provisioner "file" {
+    #uploads installation file
+    source      = "./scripts/install_jenkins.sh"
+    destination = "/tmp/install_jenkins.sh"
+  }
+  provisioner "remote-exec" {
+    # install docker and jenkins
+    inline = ["sudo sh /tmp/install_jenkins.sh",
+    "cat /var/jenkins_home/secrets/initialAdminPassword"]
+  }
+  connection {
+    host        = coalesce(self.public_ip, self.private_ip)
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file(var.PATH_TO_PRIVATE_KEY)
+  }
 }
 
 resource "aws_ebs_volume" "jenkins-data" {
