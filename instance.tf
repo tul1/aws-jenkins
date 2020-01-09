@@ -20,8 +20,7 @@ resource "aws_instance" "jenkins-instance" {
   }
   provisioner "remote-exec" {
     # install docker and jenkins
-    inline = ["sudo sh /tmp/install_jenkins.sh",
-    "cat /var/jenkins_home/secrets/initialAdminPassword"]
+    inline = ["sudo sh /tmp/install_jenkins.sh"]
   }
   connection {
     host        = coalesce(self.public_ip, self.private_ip)
