@@ -14,12 +14,17 @@ resource "aws_instance" "jenkins-instance" {
     command = "sh ./scripts/remove_host.sh jenkins-instance ~/.ssh/config"
   }
   provisioner "file" {
-    #uploads installation file
+    # upload installation file
     source      = "./scripts/install_jenkins.sh"
     destination = "/tmp/install_jenkins.sh"
   }
+  provisioner "file" {
+    # upload Dockerfile
+    source      = "./Dockerfile"
+    destination = "/tmp/Dockerfile"
+  }
   provisioner "remote-exec" {
-    # install docker and jenkins
+    # install docker and run docker-jenkins
     inline = ["sudo sh /tmp/install_jenkins.sh"]
   }
   connection {
