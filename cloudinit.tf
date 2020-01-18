@@ -1,8 +1,8 @@
 data "template_file" "jenkins-init" {
   template = file("scripts/jenkins-init.sh")
   vars = {
-    DEVICE            = "/dev/xvdh"
-    JENKINS_VERSION   = "2.121.2"
+    DEVICE          = "/dev/xvdh"
+    JENKINS_VERSION = "2.121.2"
   }
 }
 
