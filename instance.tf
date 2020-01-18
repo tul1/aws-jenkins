@@ -6,26 +6,17 @@ resource "aws_instance" "jenkins-instance" {
   key_name               = aws_key_pair.mykeypair.key_name
   provisioner "local-exec" {
     #Add host to ./ssh/config
-    command = "sh ./scripts/add_host.sh jenkins-instance ${self.public_ip} ubuntu ~/aws-jenkins/ssh_keys/mykey >> ~/.ssh/config"
+    command = "sh ./scripts/add-host.sh jenkins-instance ${self.public_ip} ubuntu ~/aws-jenkins/ssh_keys/mykey >> ~/.ssh/config"
   }
   provisioner "local-exec" {
     # remove host from ./ssh/config
     when    = destroy
-    command = "sh ./scripts/remove_host.sh jenkins-instance ~/.ssh/config"
-  }
-  provisioner "file" {
-    # upload installation file
-    source      = "./scripts/install_jenkins.sh"
-    destination = "/tmp/install_jenkins.sh"
+    command = "sh ./scripts/remove-host.sh jenkins-instance ~/.ssh/config"
   }
   provisioner "file" {
     # upload Dockerfile
     source      = "./Dockerfile"
     destination = "/tmp/Dockerfile"
-  }
-  provisioner "remote-exec" {
-    # install docker and run docker-jenkins
-    inline = ["sudo sh /tmp/install_jenkins.sh"]
   }
   connection {
     host        = coalesce(self.public_ip, self.private_ip)
@@ -33,6 +24,7 @@ resource "aws_instance" "jenkins-instance" {
     user        = "ubuntu"
     private_key = file(var.PATH_TO_PRIVATE_KEY)
   }
+  user_data = data.template_cloudinit_config.cloudinit-jenkins.rendered
 }
 
 resource "aws_ebs_volume" "jenkins-data" {
