@@ -7,6 +7,6 @@ RUN mkdir -p /tmp/download && \
  mv /tmp/download/docker/docker* /usr/local/bin/ && \
  rm -rf /tmp/download && \
  groupadd -g 999 docker && \
- usermod -aG root jenkins
- 
+ usermod -a -G root jenkins 
+
 user jenkins
